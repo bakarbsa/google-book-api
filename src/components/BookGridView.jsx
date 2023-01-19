@@ -5,6 +5,8 @@ import {
   View,
   FlatList,
   Text,
+  ActivityIndicator,
+  TouchableOpacity
 } from 'react-native';
 import { getBooksByTitle } from '../api/BookAPI';
 
@@ -32,33 +34,51 @@ const BookGridView = (props) => {
 
   return (
     pending
-    ? <Text style={{color: 'black'}}>Loading 1 ...</Text>
+    ? <View style={{flex: 1}}>
+        <ActivityIndicator size="large" style={{flex: 1}}/>
+      </View>
     : error
-      ? <Text style={{color: 'black'}}>{errorMessage}</Text>
+      ? <View style={{flex: 1, justifyContent: 'center', alignItems:'center'}}>
+          <Text style={{color: 'black', fontSize: 20, textAlign: 'center'}}>{errorMessage}</Text>
+        </View>
       : books
-        ? <View style={styles.container}>
-            <FlatList
-              data={books}
-              renderItem={({book}) => (
-                book !== undefined && book.volumeInfo !== undefined && book.volumeInfo.title !== undefined && book.volumeInfo.imageLinks.thumbnail !== undefined
-                ? <View
-                    style={{
-                      flex: 1,
-                      flexDirection: 'column',
-                      margin: 5,
-                    }}>
-                    <View style={styles.cardContainer}>
-                      <BookCard name={book.volumeInfo.title} thumbnail={book.volumeInfo.imageLinks.thumbnail}/>
-                    </View>
-                  </View>
-                : <Text style={{color: 'black'}}>Loading2...</Text>
-              )}
-              numColumns={2}
-              keyExtractor={(item, index) => index}
-              showsVerticalScrollIndicator={false}
-            />
+        ? books.length === 0 
+          ? <View style={{flex: 1, justifyContent: 'center', alignItems:'center'}}>
+              <Text style={{color: 'black', fontSize: 20, textAlign: 'center'}}>Buku tidak ditemukan</Text>
+            </View>
+          : <View style={styles.container}>
+              <FlatList
+                data={books}
+                renderItem={(book) => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => props.navigation.navigate('BookDetail', {
+                        title: book.item.volumeInfo.title,
+                        thumbnail: book.item.volumeInfo.imageLinks.thumbnail,
+                        author: book.item.volumeInfo.authors[0],
+                        description: book.item.volumeInfo.description,
+                        publisher: book.item.volumeInfo.publisher,
+                        pageCount: book.item.volumeInfo.pageCount,
+                      })}
+                      style={{
+                        flex: 1,
+                        flexDirection: 'column',
+                        margin: 5,
+                      }}>
+                      <View style={styles.cardContainer}>
+                        <BookCard name={book.item.volumeInfo.title} author={book.item.volumeInfo.authors[0]} thumbnail={book.item.volumeInfo.imageLinks.thumbnail}/>
+                      </View>
+                    </TouchableOpacity>
+                )
+                }}
+                numColumns={2}
+                keyExtractor={(item, index) => index}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
+        : <View style={{flex: 1, justifyContent: 'center', alignItems:'center'}}>
+            <Text style={{color: 'black', fontSize: 20, textAlign: 'center'}}>Tidak dapat melakukan request</Text>
           </View>
-        : <Text style={{color: 'black'}}>Error</Text>
   );
 };
 
@@ -71,7 +91,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     flex: 1,
     backgroundColor: 'transparent',
-    height: 250,
+    height: 280,
   },
 });
 

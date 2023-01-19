@@ -4,25 +4,35 @@ const api = 'https://www.googleapis.com/books/v1/volumes?q=';
 
 async function getBooksByTitle(setData, setPending, setError, setErrorMessage, title = 'Hewan') {
   const url = api + title + '&maxResults=40';
-  const bookList = [];
+  let bookList = [];
   
   try {
+    console.log(title);
     const res = await axios.get(url);
-    const totalItems = res.data.totalItems <= 20 ? res.data.totalItems : 20;
 
-    for (let i = 0; i < totalItems; i++) {
-      const item = res.data.items[i];
+    bookList = res.data.items.filter(
+      book =>
+        book.volumeInfo &&
+        book.volumeInfo?.title &&
+        book.volumeInfo?.imageLinks &&
+        book.volumeInfo?.description &&
+        book.volumeInfo?.authors &&
+        book.volumeInfo?.authors.length >= 0 &&
+        book.volumeInfo?.publisher &&
+        book.volumeInfo?.pageCount
+    );
 
-      const book = item;
-
-      bookList.push(book);
+    if (bookList.length > 1 && bookList.length % 2 !== 0) {
+      bookList.pop();
     }
+
     setData(bookList);
     setPending(false);
    
     return;
 
   } catch (err) {
+    console.log(err);
     setError(true);
     setErrorMessage(err);
     return;

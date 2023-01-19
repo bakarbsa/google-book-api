@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, TextInput } from 'react-native';
 import BookGridView from '../components/BookGridView';
 
-function Home() {
+function Home(props) {
   const [title, setTitle] = useState('');
   return (
     <View style={{flex: 1, backgroundColor: colors.white}}>
@@ -15,14 +15,15 @@ function Home() {
           defaultValue={title}
           onChangeText={newTitle => setTitle(newTitle)}
           style={{
+            color: 'black',
             borderWidth: 1,
             borderColor: colors.primary,
             borderRadius: 10,
-            paddingHorizontal: 10,
+            paddingHorizontal: 15,
             marginVertical: 10,
           }}
         />
-        <BookGridView title={title}/>
+        <BookGridView navigation={props.navigation} title={title}/>
       </View>
     </View>
   );
