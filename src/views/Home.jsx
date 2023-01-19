@@ -4,6 +4,7 @@ import BookGridView from '../components/BookGridView';
 
 function Home(props) {
   const [title, setTitle] = useState('');
+  const [inputValue, setInputValue] = useState('');
   return (
     <View style={{flex: 1, backgroundColor: colors.white}}>
       <View style={style.container}>
@@ -13,7 +14,8 @@ function Home(props) {
           placeholder='Cari buku, misalkan "Hewan"'
           placeholderTextColor='rgba(0, 0, 0, 0.3)'
           defaultValue={title}
-          onChangeText={newTitle => setTitle(newTitle)}
+          onSubmitEditing={() => setTitle(inputValue)}
+          onChangeText={newTitle => setInputValue(newTitle)}
           style={{
             color: 'black',
             borderWidth: 1,

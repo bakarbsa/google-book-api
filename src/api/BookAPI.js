@@ -26,6 +26,12 @@ async function getBooksByTitle(setData, setPending, setError, setErrorMessage, t
       bookList.pop();
     }
 
+    if (bookList.length > 40) {
+      bookList = bookList.slice(0, 40);
+    }
+
+    console.log(bookList.length);
+
     setData(bookList);
     setPending(false);
    
